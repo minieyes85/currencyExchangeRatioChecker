@@ -6,7 +6,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.select import Select
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-from bs4 import BeautifulSoup
 
 options = webdriver.ChromeOptions()
 options.add_argument("headless")
@@ -87,14 +86,22 @@ def get_latest_cur_exch_table(year, month, day):
         if j == "USD" or j == "JPY":
             # print(i[0] + " " + str(i[8]) + " " + str(i[9]))
             
-            o_dict[i[0]] = [i[8]]
-            o_dict[i[0]].append(i[9])
+            buyWithComm = float(i[4])
+            stdCurr = float(i[8])
+            
+            comm = buyWithComm - stdCurr
+            
+            # 우대율 90%
+            realComm = comm*(1-0.9)
+            realCurr = "{:.1f}".format(stdCurr + realComm)
+            
+            o_dict[j] = [realCurr, stdCurr]
     
     return o_dict
 
     # //*[@id="fxprint"]/table/tbody/tr[1]
     
-# test = get_latest_cur_exch_table("2022","08","26")
+# test = get_latest_cur_exch_table("2022","09","02")
 
 # print(test)
 
